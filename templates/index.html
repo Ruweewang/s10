@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="/static/font-awesome/css/font-awesome.min.css">
+    <link href="/static/css/bootstrap.css" rel="stylesheet">
+    <link href="/static/css/custom_v2.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/static/css/dashboard.css" rel="stylesheet">
+</head>
+  <body>
+    {% block body%}
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Project name</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/">首页</a></li>
+            <li><a href="{% url 'host' %}">主机</a></li>
+            <li><a href="{% url 'asset' %}">资产</a></li>
+            <li><a href="{% url 'audit' %}">审计</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+            <form class="navbar-form ">
+                <input class="form-control" placeholder="Search..." type="text">
+            </form>
+            </li>
+              {% if request.user.is_authenticated %}
+                    <li class="dropdown ">
+                      <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="true">{{ request.user.userprofile.name }}<span class="caret"></span></a>
+                      <ul class="dropdown-menu">
+                        <li><a href="/logout/">Logout</a></li>
+                      </ul>
+                    </li>
+                    <li>
+                      <a href="{% url 'create_article' %}">发帖</a>
+                    </li>
+              {% else %}
+                  <li>
+                     <a href="/login/">Login</a>
+                  </li>
+              {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          {% block left_sidebar %}
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">Reports</a></li>
+            <li><a href="#">Analytics</a></li>
+            <li><a href="#">Export</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Nav item</a></li>
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+            <li><a href="">More navigation</a></li>
+          </ul>
+          <ul class="nav nav-sidebar">
+            <li><a href="">Nav item again</a></li>
+            <li><a href="">One more nav</a></li>
+            <li><a href="">Another nav item</a></li>
+          </ul>
+          {% endblock %}
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          {% block right_content %}
+          {% for article in articles %}
+              <div class="blog-box row">
+                <div class="head-img col-md-3">
+                    <img src="/static/{{ article.head_img }}">
+                </div>
+                <div class="blog-summary-box col-md-9">
+                    <h3><a href="{% url 'article' article.id %}">{{ article.title }}</a></h3>
+                    <div class="blog-summary-btn">
+                        <a>{{ article.author.name }}</a>
+                        <span>{{ article.publish_date }}</span>
+                        <span><i class="fa fa-star"></i>4</span>
+                        <span><i class="fa fa-comment-o"></i>9</span>
+                        <span><i class="fa fa-wechat"></i></span>
+                    </div>
+                    <div class="blog-summary">
+                        {{ article.summary }}
+                    </div>
+                </div>
+              </div>
+
+
+
+         {% endfor %}
+
+            <div class="pagination">
+                <nav>
+                  <ul class="pagination">
+                        {% if articles.has_previous %}
+
+                           <li ><a href="?page={{ articles.previous_page_number }}" >上一页</a></li>
+
+                        {% endif %}
+
+                        {% for p_num in articles.paginator.page_range  %}
+                            {% if p_num == articles.number %}
+                                 <li class="active"><a href="?page={{ p_num }}">{{ p_num }}</a></li>
+                            {% else %}
+                                 <li ><a href="?page={{ p_num }}">{{ p_num }}</a></li>
+                            {% endif %}
+                        {% endfor %}
+                      {% if articles.has_next %}
+
+                               <li ><a href="?page={{ articles.next_page_number }}" >下一页</a></li>
+
+                        {% endif %}
+                  </ul>
+                </nav>
+
+            </div>
+
+
+          {% endblock %}
+          </div>
+        </div>
+
+      </div>
+    </div>
+{% endblock %}
+<!-- Bootstrap core JavaScript
+================================================== -->
+<script src="index_files/holder.htm"></script>
+<script src="/static/js/jquery.js"></script>
+<script src="/static/js/bootstrap.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#navbar a[href='{{ request.path }}']").parent().addClass("active");
+});
+</script>
+
+{% block bottom-js %}
+<script type="text/javascript">
+
+</script>
+
+{% endblock %}
+
+</body></html>
